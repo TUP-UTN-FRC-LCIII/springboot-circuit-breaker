@@ -14,16 +14,21 @@ public class MicroBRestClient {
 
     String baseResourceUrl = "http://localhost:8081/micro";
 
+    private Integer counter = 0;
+
     @Autowired
     private RestTemplate restTemplate;
 
     @CircuitBreaker(name = RESILIENCE4J_INSTANCE_NAME, fallbackMethod = FALLBACK_METHOD)
     public ResponseEntity<String> getMicro() {
-        System.out.println("Calling Micro B");
+        counter++;
+        System.out.println("Execution N° " + counter + " - Calling micro B");
         return restTemplate.getForEntity(baseResourceUrl, String.class);
     }
 
     public ResponseEntity<String> fallback(Exception ex) {
+        counter++;
+        System.out.println("Execution N° " + counter + " - FallBack B");
         return ResponseEntity.status(503).body("Response from Circuit Breaker Fallback of Micro B");
     }
 }
